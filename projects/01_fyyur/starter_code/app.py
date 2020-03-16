@@ -46,6 +46,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(200))
+
     shows_venue = db.relationship('Show', backref='venue', lazy=True)
 
     # implement any missing fields, as a database migration using Flask-Migrate
@@ -115,29 +116,47 @@ def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
 
-    flash(db.session.query(Venue.city, Venue.state))
+    cities = db.session.query(Venue.city, Venue.state).distinct(Venue.city, Venue.state)
+    data = []
 
-    data = [{
-        "city": "San Francisco",
-        "state": "CA",
-        "venues": [{
-            "id": 1,
-            "name": "The Musical Hop",
-            "num_upcoming_shows": 0,
-        }, {
-            "id": 3,
-            "name": "Park Square Live Music & Coffee",
-            "num_upcoming_shows": 1,
-        }]
-    }, {
-        "city": "New York",
-        "state": "NY",
-        "venues": [{
-            "id": 2,
-            "name": "The Dueling Pianos Bar",
-            "num_upcoming_shows": 0,
-        }]
-    }]
+    for city in cities:
+        venues_by_city = db.session.query(Venue.id, Venue.name).filter(Venue.city==city[0])
+        v = []
+        for venue in venues_by_city:
+            v.append({
+                "id": venue.id,
+                "name": venue.name,
+                "num_upcoming_shows": db.session.query(Show).filter(Show.venue_id == venue.id).filter(Show.start_time > datetime.now()).count()
+            })
+
+        data.append({
+            "city": city[0],
+            "state": city[1],
+            "venues": v
+        })
+
+    # data = [{
+    #     "city": "San Francisco",
+    #     "state": "CA",
+    #     "venues": [{
+    #         "id": 1,
+    #         "name": "The Musical Hop",
+    #         "num_upcoming_shows": 0,
+    #     }, {
+    #         "id": 3,
+    #         "name": "Park Square Live Music & Coffee",
+    #         "num_upcoming_shows": 1,
+    #     }]
+    # }, {
+    #     "city": "New York",
+    #     "state": "NY",
+    #     "venues": [{
+    #         "id": 2,
+    #         "name": "The Dueling Pianos Bar",
+    #         "num_upcoming_shows": 0,
+    #     }]
+    # }]
+    
     return render_template('pages/venues.html', areas=data)
 
 
@@ -493,7 +512,7 @@ def create_artist_submission():
             city=request.form['city'],
             state=request.form['state'],
             phone=request.form['phone'],
-            genres=request.form['genres'],
+            genres=request.form.getlist('genres'),
             image_link=request.form['image_link'],
             website=request.form['website'],
             facebook_link=request.form['facebook_link'],
