@@ -249,8 +249,8 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    # TODO: insert form data as a new Venue record in the db, instead
-    # TODO: modify data to be the data object returned from db insertion
+    # insert form data as a new Venue record in the db, instead
+    # modify data to be the data object returned from db insertion
     error = False
 
     try:
@@ -261,11 +261,11 @@ def create_venue_submission():
             state=request.form['state'],
             address=request.form['address'],
             phone=request.form['phone'],
-            #website=request.form['website'],
-            #image_link=request.form['image_link'],
-            facebook_link=request.form['facebook_link']
-            #seeking_talent=True if 'seeking_talent' in request.form else False,
-            #seeking_description=request.form['seeking_description']
+            website=request.form['website'],
+            image_link=request.form['image_link'],
+            facebook_link=request.form['facebook_link'],
+            seeking_talent=True if 'seeking_talent' in request.form else False,
+            seeking_description=request.form['seeking_description']
         )
 
         db.session.add(venue)
