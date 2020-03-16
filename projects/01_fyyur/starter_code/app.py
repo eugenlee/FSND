@@ -113,7 +113,7 @@ def index():
 
 @app.route('/venues')
 def venues():
-    # TODO: replace with real venues data.
+    # replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
 
     cities = db.session.query(Venue.city, Venue.state).distinct(Venue.city, Venue.state)
@@ -156,7 +156,7 @@ def venues():
     #         "num_upcoming_shows": 0,
     #     }]
     # }]
-    
+
     return render_template('pages/venues.html', areas=data)
 
 
@@ -325,16 +325,26 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
     # TODO: replace with real data returned from querying the database
-    data = [{
-        "id": 4,
-        "name": "Guns N Petals",
-    }, {
-        "id": 5,
-        "name": "Matt Quevedo",
-    }, {
-        "id": 6,
-        "name": "The Wild Sax Band",
-    }]
+
+    artists = db.session.query(Artist.id, Artist.name).distinct(Artist.name)
+    data = []
+
+    for artist in artists:
+        data.append({
+            "id": artist[0],
+            "name": artist[1]
+        })
+
+    # data = [{
+    #     "id": 4,
+    #     "name": "Guns N Petals",
+    # }, {
+    #     "id": 5,
+    #     "name": "Matt Quevedo",
+    # }, {
+    #     "id": 6,
+    #     "name": "The Wild Sax Band",
+    # }]
     return render_template('pages/artists.html', artists=data)
 
 
