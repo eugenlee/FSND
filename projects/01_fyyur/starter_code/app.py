@@ -114,6 +114,9 @@ def index():
 def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
+
+    flash(db.session.query(Venue.city, Venue.state))
+
     data = [{
         "city": "San Francisco",
         "state": "CA",
