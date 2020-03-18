@@ -162,17 +162,34 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
+    # implement search on venues with partial string search. Ensure it's case-insensitive.
     # seach for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+    search_term = request.form.get('search_term', '')
+    venues = db.session.query(Venue).filter(Venue.name.ilike(f'%{search_term}%'))
+    data = []
+
+    for venue in venues:
+        data.append({
+            "id": venue.id,
+            "name": venue.name,
+            "num_upcoming_shows": db.session.query(Show).filter(Show.venue_id == venue.id).filter(Show.start_time > datetime.now()).count()
+        })
+
     response = {
-        "count": 1,
-        "data": [{
-            "id": 2,
-            "name": "The Dueling Pianos Bar",
-            "num_upcoming_shows": 0,
-        }]
+        "count": len(data),
+        "data": data
     }
+
+    # response = {
+    #     "count": 1,
+    #     "data": [{
+    #         "id": 2,
+    #         "name": "The Dueling Pianos Bar",
+    #         "num_upcoming_shows": 0,
+    #     }]
+    # }
+
     return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 
@@ -316,6 +333,15 @@ def delete_venue(venue_id):
     # TODO: Complete this endpoint for taking a venue_id, and using
     # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
 
+    try:
+        ven_del = Venue.query.get(venue_id)
+        db.session.delete(ven_del)
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+
     # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
     # clicking that button delete it from the db then redirect the user to the homepage
     return None
@@ -326,14 +352,7 @@ def delete_venue(venue_id):
 def artists():
     # replace with real data returned from querying the database
 
-    artists = db.session.query(Artist.id, Artist.name).distinct(Artist.name)
-    data = []
-
-    for artist in artists:
-        data.append({
-            "id": artist[0],
-            "name": artist[1]
-        })
+    data = db.session.query(Artist)
 
     # data = [{
     #     "id": 4,
@@ -353,6 +372,8 @@ def search_artists():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
     # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
     # search for "band" should return "The Wild Sax Band".
+
+    
     response = {
         "count": 1,
         "data": [{
@@ -556,20 +577,17 @@ def shows():
     # displays list of shows at /shows
     # replace with real venues data.
     # num_shows should be aggregated based on number of upcoming shows per venue.
-    showers = db.session.query(Show.venue_id, Show.artist_id, Show.start_time)
+    showers = db.session.query(Show).join(Artist).join(Venue)
     data = []
 
     for show in showers:
-        venue = db.session.query(Venue.name).filter(Venue.id == show[0]).first()
-        artist = db.session.query(Artist.name, Artist.image_link).filter(Artist.id == show[1]).first()
-        print(venue)
         data.append({
-            "venue_id": show[0],
-            "venue_name": venue[0],
-            "artist_id": show[1],
-            "artist_name": artist[0],
-            "artist_image_link": artist[1],
-            "start_time": str(show[2])
+            "venue_id": show.venue_id,
+            "venue_name": show.venue.name,
+            "artist_id": show.artist_id,
+            "artist_name": show.artist.name,
+            "artist_image_link": show.artist.image_link,
+            "start_time": str(show.start_time)
         })
     # data = [{
     #     "venue_id": 1,
@@ -620,7 +638,7 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
     # called to create new shows in the db, upon submitting new show listing form
-    # TODO: insert form data as a new Show record in the db, instead
+    # insert form data as a new Show record in the db, instead
     error = False
 
     try:
