@@ -142,7 +142,6 @@ def create_app(test_config=None):
     except:
       abort(422)
   '''
-  @TODO: 
   Create a POST endpoint to get questions based on a search term. 
   It should return any questions for whom the search term 
   is a substring of the question. 
@@ -167,17 +166,29 @@ def create_app(test_config=None):
       })
 
     except:
-      abort(402)
+      abort(404)
   '''
-  @TODO: 
   Create a GET endpoint to get questions based on category. 
 
   TEST: In the "List" tab / main screen, clicking on one of the 
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route('/categories/<int:category_id>/questions')
+  def search_categories(category_id):
+    try:
+      questions = Question.query.filter(Question.category==category_id).all()
+      current_questions = paginate_questions(request,questions)
 
+      return jsonify({
+        'success': True,
+        'questions': current_questions,
+        'total_questions': len(current_questions),
+        'current_category': category_id
+      })
 
+    except:
+      abort(404)
   '''
   @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
