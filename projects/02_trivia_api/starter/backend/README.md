@@ -123,7 +123,22 @@ The API will return two error types when requests fail:
 
 #### GET /
 - General:
-    - Sample:
+    - Returns a success value, list of category objects and total number of categories
+- Sample: ```curl http://127.0.0.1:5000/categories```
+```
+{
+   "success" : true,
+   "categories" : {
+      "4" : "History",
+      "1" : "Science",
+      "3" : "Geography",
+      "6" : "Sports",
+      "2" : "Art",
+      "5" : "Entertainment"
+   },
+   "total_categories" : 6
+}
+```
 
 
 
