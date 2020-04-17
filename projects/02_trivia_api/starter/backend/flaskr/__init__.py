@@ -117,11 +117,13 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['POST'])
   def create_question():
     body = request.get_json()
+    if not('question' in body and 'answer' in body and 'difficulty' in body and 'category' in body):
+      abort(422)
 
-    new_question = body.get('question', None)
-    new_answer = body.get('answer', None)
-    new_difficulty = body.get('difficulty', None)
-    new_category = body.get('category', None)
+    new_question = body.get('question')
+    new_answer = body.get('answer')
+    new_difficulty = body.get('difficulty')
+    new_category = body.get('category')
 
     try:
       question = Question(question=new_question,answer=new_answer,difficulty=new_difficulty,category=new_category)
@@ -153,10 +155,11 @@ def create_app(test_config=None):
     body = request.get_json()
     search_term = body.get('searchTerm', None)
 
+    if search_term == '': abort(404)
+
     try:
       questions = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
       current_questions = paginate_questions(request,questions)
-
       return jsonify({
         'success': True,
         'questions': current_questions,
