@@ -399,26 +399,81 @@ The API will return two error types when requests fail:
 }
 ```
 
-#### /
+#### POST /questions/search
 - General:
-    - 
-- Sample: ``` ```
+    - Search questions based on a search term. Returns any questions for whom the search term is a substring of the question.
+- Sample: ```curl http://127.0.0.1:5000/questions/search -X POST -H "Content-Type: application/json" -d '{"searchTerm": "time"}'```
+```
+{
+  "questions": [
+    {
+      "answer": "One", 
+      "category": 2, 
+      "difficulty": 4, 
+      "id": 18, 
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    }, 
+    {
+      "answer": "None of your business", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 52, 
+      "question": "What time is it"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 2
+}
 ```
 
-```
-
-#### /
+#### GET /categories/<int:category_id>/questions
 - General:
-    - 
-- Sample: ``` ```
+    - Fetches questions from a given category. Returns current category, list of question objects, success value and total number of questions.
+- Sample: ```curl http://127.0.0.1:5000/categories/3/questions```
+```
+{
+  "current_category": 3, 
+  "questions": [
+    {
+      "answer": "Lake Victoria", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 13, 
+      "question": "What is the largest lake in Africa?"
+    }, 
+    {
+      "answer": "Agra", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 15, 
+      "question": "The Taj Mahal is located in which Indian city?"
+    }, 
+    {
+      "answer": "a lot", 
+      "category": 3, 
+      "difficulty": 5, 
+      "id": 25, 
+      "question": "how much woud could a wood chuck chuck if it could chuck wood?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 3
+}
 ```
 
-```
-
-#### /
+#### POST /quizzes
 - General:
-    - 
-- Sample: ``` ```
+    - Returns a random question within a given category that is not one of the previous questions. Returns success value and a list of a question object.
+- Sample: ```curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [], "quiz_category": {"type": "Science", "id": "1"}}'```
 ```
-
+{
+  "question": {
+    "answer": "The Liver", 
+    "category": 1, 
+    "difficulty": 4, 
+    "id": 20, 
+    "question": "What is the heaviest organ in the human body?"
+  }, 
+  "success": true
+}
 ```
