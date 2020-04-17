@@ -107,3 +107,14 @@ python test_flaskr.py
 - Authentication: This version of the application does not require authentication or API keys.
 
 ### Error Handling
+Errors are returned as JSON objects in the following format:
+```
+{
+    "success": False, 
+    "error": 404,
+    "message": "Not found"
+}
+```
+The API will return two error types when requests fail:
+- 404: Resource Not Found
+- 422: Not Processable
