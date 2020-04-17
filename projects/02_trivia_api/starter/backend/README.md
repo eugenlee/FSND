@@ -477,3 +477,11 @@ The API will return two error types when requests fail:
   "success": true
 }
 ```
+
+## Deployment N/A
+
+## Authors
+Eugene
+
+## Acknowledgments
+Udacity!
