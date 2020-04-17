@@ -20,7 +20,7 @@ def setup_db(app, database_path=database_path):
     db.create_all()
 
 '''
-Question
+Question mate
 
 '''
 class Question(db.Model):  
