@@ -100,5 +100,3 @@ python test_flaskr.py
 ```
 
 ## API Reference
-```
-```
