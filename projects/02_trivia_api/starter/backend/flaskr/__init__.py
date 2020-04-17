@@ -241,5 +241,29 @@ def create_app(test_config=None):
       "error": 422,
       "message": "unprocessable"
       }), 422
+
+  @app.errorhandler(400)
+  def unprocessable(error):
+    return jsonify({
+      "success": False, 
+      "error": 400,
+      "message": "Bad Request"
+      }), 400
+
+  @app.errorhandler(405)
+  def unprocessable(error):
+    return jsonify({
+      "success": False, 
+      "error": 405,
+      "message": "Method Not Allowed"
+      }), 405
+
+  @app.errorhandler(500)
+  def unprocessable(error):
+    return jsonify({
+      "success": False, 
+      "error": 500,
+      "message": "Internal Server Error"
+      }), 500
   
   return app
