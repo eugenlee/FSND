@@ -8,7 +8,6 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
-
 def paginate_questions(request,selection):
   page = request.args.get('page', 1, type=int)
   start = (page-1) * QUESTIONS_PER_PAGE
@@ -17,7 +16,6 @@ def paginate_questions(request,selection):
   questions = [question.format() for question in selection]
   current_questions = questions[start:end]
   return current_questions
-
 
 def create_app(test_config=None):
   # create and configure the app
@@ -190,7 +188,6 @@ def create_app(test_config=None):
     except:
       abort(404)
   '''
-  @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
   This endpoint should take category and previous question parameters 
   and return a random questions within the given category, 
@@ -200,13 +197,46 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes', methods=['POST'])
+  def play_quiz():
+    try:
+      body = request.get_json()
+      previous_questions = body.get('previous_questions')
+      category = body['quiz_category']['id']
 
+      if category == 0:
+        questions = Question.query.filter(Question.id.notin_(previous_questions)).all()
+      else:
+        questions = Question.query.filter(Question.category==category,Question.id.notin_(previous_questions)).all()
+      
+      l = len(questions)
+      quiz_question = questions[random.randrange(0, l)].format() if l > 0 else None
+
+      return jsonify({
+        'success': True,
+        'question': quiz_question
+      })
+
+    except:
+      abort(422)
   '''
-  @TODO: 
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(404)
+  def not_found(error):
+    return jsonify({
+        "success": False, 
+        "error": 404,
+        "message": "Not found"
+        }), 404
+
+  @app.errorhandler(422)
+  def unprocessable(error):
+    return jsonify({
+      "success": False, 
+      "error": 422,
+      "message": "unprocessable"
+      }), 422
   
   return app
-
-    
