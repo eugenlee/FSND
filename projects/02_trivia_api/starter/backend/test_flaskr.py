@@ -15,7 +15,8 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
+        self.database_path = "postgres://{}/{}".format(
+            'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context
@@ -24,7 +25,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -68,7 +69,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Not found')
 
     def test_delete_question(self):
-        question = Question(question="blah", answer="blah", category="1", difficulty="1")
+        question = Question(question="blah", answer="blah",
+                            category="1", difficulty="1")
         question.insert()
         question_id = question.id
 
@@ -88,7 +90,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'unprocessable')
 
     def test_add_create_question(self):
-        new_question = {'question': 'hobo', 'answer': 'bill', 'difficulty': 3, 'category': 3}
+        new_question = {'question': 'hobo',
+                        'answer': 'bill', 'difficulty': 3, 'category': 3}
         total_questions_b = len(Question.query.all())
         res = self.client().post('/questions', json=new_question)
         data = json.loads(res.data)
@@ -147,7 +150,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["message"], "Not found")
 
     def test_play_quiz(self):
-        new_quiz = {'previous_questions': [], 'quiz_category': {'type': 'Science', 'id': 1}}
+        new_quiz = {'previous_questions': [],
+                    'quiz_category': {'type': 'Science', 'id': 1}}
 
         res = self.client().post('/quizzes', json=new_quiz)
         data = json.loads(res.data)
@@ -156,13 +160,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
 
     def test_422_play_quiz(self):
-        new_quiz= {'previous_questions': []}
+        new_quiz = {'previous_questions': []}
         res = self.client().post('/quizzes', json=new_quiz)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "unprocessable")
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
