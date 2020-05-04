@@ -1,4 +1,4 @@
-# Coffee Shop Full Stack
+# Coffee Shop Full Stack (Pulled separately [here](https://github.com/eugenlee/coffeeshop))
 
 ## Full Stack Nano - IAM Final Project
 
