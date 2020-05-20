@@ -1,5 +1,5 @@
 ## This is the public repository for Udacity's Full-Stack Nanodegree program. 
-## Check out my other projects from this course!
+## Check out my projects from this course!
 1. [fyyur](https://github.com/eugenlee/fyyur)
 2. [trivia](https://github.com/eugenlee/trivia)
 3. [coffeeshop](https://github.com/eugenlee/coffeeshop) currently here
